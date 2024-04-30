@@ -2,15 +2,26 @@
 
 ## 목적 
 ```
-Apache, Tomcat을 연동하여 Apache는 was, Tomcat은 server로 사용하고 clustering을 적용하여 부하를 분산한다. 
-또한 Apache, Tomcat 모두 ssl 을 적용하여 보안 수준을 향상한다. 궁극적으로는 Apache의 화면에서 Tomcat이 뜰 수 있도록 하는데 목적을 둔다. 
+Apache, Tomcat을 연동하여 Apache는 was, Tomcat은 server로 사용하고 clustering을 적용하여 부하를 분산한다.
+
+
+또한 Apache, Tomcat 모두 ssl 을 적용하여 보안 수준을 향상한다.
+
+
+궁극적으로는 Apache의 화면에서 Tomcat이 뜰 수 있도록 하는데 목적을 둔다.
+
+
 ```
 
 
 ### clustering and load balancing:
 ```
 ssl 을 설정하기 이전에는 80번 포트를 사용해 연동될 수 있도록한다.
+
+
 아래는 변경해야할 환경설정이다.
+
+
 ```
 Apache - httpd.conf:
 ```
@@ -153,7 +164,7 @@ include conf/extra/httpd-ssl.conf(주석 해제 없으면 따로 추가)
 - SSLCertificateChainFile “C:\cert/DigiCertCA.pem”
 - httpd.conf 파일의 기존에 설정했던 부분에서 수정
 <VirtualHost *:443>
-	ServerName 192.168.1.96
+	ServerName 아파치 ip
 	SSLEngine on
 	SSLCertificateFile C:\ssl\private.crt
 	SSLCertificateKeyFile C:\ssl\private.key
@@ -166,8 +177,8 @@ include conf/extra/httpd-ssl.conf(주석 해제 없으면 따로 추가)
 		ProxyPass / balancer://mycluster/
 		ProxyPassReverse / balancer://mycluster
 	<Proxy balancer://mycluster stickysession=JSESSIONID|jsessionid scolonpathdelim=On>
-		BalancerMember http://192.168.1.98:8080 route=1
-		BalancerMember http://192.168.1.99:8080 route=2 status=+H
+		BalancerMember http://톰캣1번 ip:8080 route=1
+		BalancerMember http://톰캣2번 ip:8080 route=2 status=+H
 
 	</Proxy>
 </VirtualHost> 
